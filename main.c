@@ -339,13 +339,26 @@ int main(void) {
     
     //Main loop
     clearAll();
-    unsigned char res = 0;
+    unsigned char res = 0, l = 1;
     while (1) {
-        if ( (PINF & 0b00100000) == 0 ) {
+        if ( (PINF & 0b00100000) == 0 ) { //BTN pressed
             res = cnt;
-            _delay_ms(40);
-            while( (PINF & 0b00100000) == 0) {
-                draw(pics[res]);
+            clearAll();
+            while( (PINF & 0b00100000) == 0) { //BTN released
+                _delay_ms(40);
+            }
+            while ( (PINF & 0b00100000) != 0 ) { //While BTN not pressed
+                for ( unsigned char x = 0; x < 5; ++x) {
+                    draw(pics[l]);
+                    if ( (PINF & 0b00100000) == 0 ) break;
+                }
+                if ( (PINF & 0b00100000) == 0 ) break;
+                l+=1;
+                if ( l == 7 ) l = 1;
+            }
+            clearAll();
+            while( (PINF & 0b00100000) == 0) { //BTN released
+                _delay_ms(40);
             }
         }
         draw(pics[res]);
